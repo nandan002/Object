@@ -1,13 +1,11 @@
 import time
 import os.path
-from multiprocessing import Process, Queue
-from threading import Thread
-import queue
+
 import cv2
 import numpy as np
 
 from flask import Flask, request, render_template, jsonify,make_response
-import concurrent.futures
+
 
 app = Flask(__name__)
 
@@ -81,7 +79,7 @@ def object_track(video,image,bbox,description,price):
     for i in range(1, len(new_list), 2):
         tracker_time.append(str(new_list[i - 1]) + ":" + str(new_list[i]))
     cap.release()
-    return jsonify({"Tracker Time":tracker_time})
+    return tracker_time
 
 @app.route('/object', methods=["POST"])
 def object():
@@ -93,7 +91,7 @@ def object():
         params = request.get_json()
         tracker_time=object_track(params['video'],params['image'],params['bbox'],params['description'],params['price'])
 
-    return tracker_time
+    return jsonify({"Tracker Time":tracker_time})
 
 if __name__ == '__main__':
     app.run(debug=True)
